@@ -1,10 +1,10 @@
+# Users credentials
+valid_users.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Users credentials
-valid_users.json
 
 # C extensions
 *.so

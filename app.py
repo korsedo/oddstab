@@ -1,5 +1,6 @@
 import re
 import json
+import logging
 import pandas as pd
 import datetime as dt
 from sqlalchemy import create_engine
@@ -38,11 +39,13 @@ TOP_COUNTRIES = [
     'europe'
 ]
 
+
 def stripe_rows(row_ix):
     if row_ix % 2 == 0:
         return 'rgb(248, 248, 248)'
     else:
         return 'rgb(255, 255, 255)'
+
 
 def get_outcome(score):
     if score == '-:-':
@@ -56,11 +59,13 @@ def get_outcome(score):
         else:
             return 'draw'
 
+
 def odds_2_decimal(odds):
     if isinstance(odds, int) or isinstance(odds, float) and odds > 0:
         return '{0:.2f}'.format(odds)
     else:
         return '-'
+
 
 def odds_change_direction(odds, open_odds):
     try:
@@ -346,7 +351,6 @@ def create_h2h_tab(match_link):
     return df[cols].to_dict('records'), tooltip_data, style_data_conditional
 
 
-
 def create_league_odds_tab(country, league):
     league_data, league_tooltip_data, league_style_data = league_odds_tab(country, league)
     result = html.Div([
@@ -517,6 +521,7 @@ def serve_layout():
     ])    
     return layout
 
+
 external_stylesheets = [
     'https://codepen.io/chriddyp/pen/bWLwgP.css',
     'https://codepen.io/amyoshino/pen/jzXypZ.css'  # Boostrap CSS
@@ -544,6 +549,7 @@ def update_country_list(country_button):
         countries = sorted(DATA['country'].unique())
     values = [{'label':i.capitalize(), 'value':i} for i in countries]
     return values
+
 
 @app.callback(
     [Output('leagues-dropdown', 'options'),
@@ -579,4 +585,11 @@ def update_odds_tab(match_link, country, league):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+    filename='./oddstab.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
     app.run_server(debug=False)
