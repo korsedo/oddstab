@@ -589,7 +589,7 @@ if __name__ == '__main__':
     filename='./oddstab.log',
     filemode='a',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO)
+    level=logging.ERROR)
     logger = logging.getLogger(__name__)
 
-    app.run_server(debug=False)
+    app.run_server(debug=False, host='0.0.0.0')
