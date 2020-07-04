@@ -458,6 +458,65 @@ def create_match_tabs(match_link):
     return result
 
 
+def serve_layout():
+    layout = html.Div([
+        # header
+        html.Div([
+            html.Div([
+                dcc.RadioItems(
+                    id='odds-margin-button',
+                    options=[
+                        {'label': 'ON True Odds', 'value': 'on'},
+                        {'label': 'OFF True Odds', 'value': 'off'},
+                    ],
+                    value='off'
+                )
+            ], className= 'one columns', style={'marginLeft': 100}),
+
+            html.Div([
+                dcc.RadioItems(
+                    id='countries-button',
+                    options=[
+                        {'label': 'TOP Countries', 'value': 'top'},
+                        {'label': 'All Countries', 'value': 'all'},
+                    ],
+                    value='top'
+                )
+            ], className= 'one columns', style={'marginLeft': 50}),
+
+            html.Div([
+                dcc.Dropdown(
+                    id='countries-dropdown',
+                    value='spain',
+                    style=dict(width = '250px')
+                )
+            ], className= 'one columns', style={'marginLeft': 100}),
+            
+            html.Div([
+                dcc.Dropdown(
+                    id='leagues-dropdown',
+                    style=dict(width = '100px')
+                )
+            ], className= 'one columns', style={'marginLeft': 100}),
+
+            html.Div([
+                dcc.Dropdown(
+                    id='matches-dropdown',
+                    style=dict(width = '400px')
+                )
+            ], className= 'one columns', style={'marginLeft': 150})
+            
+            
+        ], className="row 1", style={'marginTop': 30, 'marginBottom': 15}),
+
+        # odds table
+        html.Div(
+            id='odds-table',
+            className="row 2",
+            style={'marginTop': 30, 'marginBottom': 15}),
+    ])    
+    return layout
+
 external_stylesheets = [
     'https://codepen.io/chriddyp/pen/bWLwgP.css',
     'https://codepen.io/amyoshino/pen/jzXypZ.css'  # Boostrap CSS
@@ -472,63 +531,7 @@ auth = dash_auth.BasicAuth(
     VALID_USERNAME_PASSWORD_PAIRS
 )
 
-app.layout = html.Div([
-    # header
-    html.Div([
-        html.Div([
-            dcc.RadioItems(
-                id='odds-margin-button',
-                options=[
-                    {'label': 'ON True Odds', 'value': 'on'},
-                    {'label': 'OFF True Odds', 'value': 'off'},
-                ],
-                value='off'
-            )
-        ], className= 'one columns', style={'marginLeft': 100}),
-
-        html.Div([
-            dcc.RadioItems(
-                id='countries-button',
-                options=[
-                    {'label': 'TOP Countries', 'value': 'top'},
-                    {'label': 'All Countries', 'value': 'all'},
-                ],
-                value='top'
-            )
-        ], className= 'one columns', style={'marginLeft': 50}),
-
-         html.Div([
-            dcc.Dropdown(
-                id='countries-dropdown',
-                value='spain',
-                style=dict(width = '250px')
-            )
-         ], className= 'one columns', style={'marginLeft': 100}),
-        
-         html.Div([
-            dcc.Dropdown(
-                id='leagues-dropdown',
-                style=dict(width = '100px')
-            )
-         ], className= 'one columns', style={'marginLeft': 100}),
-
-         html.Div([
-            dcc.Dropdown(
-                id='matches-dropdown',
-                style=dict(width = '400px')
-            )
-         ], className= 'one columns', style={'marginLeft': 150})
-        
-        
-    ], className="row 1", style={'marginTop': 30, 'marginBottom': 15}),
-
-    # odds table
-    html.Div(
-        id='odds-table',
-        className="row 2",
-        style={'marginTop': 30, 'marginBottom': 15}),
-]
-)
+app.layout = serve_layout()
 
 
 @app.callback(
