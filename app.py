@@ -1,15 +1,20 @@
 import re
+import json
 import pandas as pd
 import datetime as dt
 from sqlalchemy import create_engine
 
 import dash
+import dash_auth
 import dash_table
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_table.Format import Format
 
+
+with open('./valid_users.json') as handle:
+    VALID_USERNAME_PASSWORD_PAIRS  = json.loads(handle.read())
 
 ENGINE = create_engine("postgresql://korsedo_db:ADeL23099114!@134.209.91.36:5432/betting_db")
 
@@ -96,8 +101,11 @@ def league_odds_tab(country, league):
         for col in cols:
             padding = '2px 4px'
             font_size = 15
+            font_weight = 'normal'
             bg_color = stripe_rows(row_ix) # stripe tab rows
 
+            if col == 'home_name' or col == 'away_name':
+                font_weight = 'bold'
             if col == 'total' or col == 'handicap':
                 padding = '2px 12px'
                 font_size = 14
@@ -108,6 +116,7 @@ def league_odds_tab(country, league):
                     'backgroundColor': bg_color,
                     'padding': padding,
                     'fontSize': font_size,
+                    'fontWeight': font_weight,
                 }
             )
 
@@ -454,10 +463,14 @@ external_stylesheets = [
     'https://codepen.io/amyoshino/pen/jzXypZ.css'  # Boostrap CSS
 ]
 
-
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.config.suppress_callback_exceptions = True
+
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 app.layout = html.Div([
     # header
