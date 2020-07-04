@@ -16,7 +16,7 @@ from dash_table.Format import Format
 with open('./valid_users.json') as handle:
     VALID_USERNAME_PASSWORD_PAIRS  = json.loads(handle.read())
 
-ENGINE = create_engine("postgresql://korsedo_db:ADeL23099114!@134.209.91.36:5432/betting_db")
+ENGINE = create_engine('postgresql://' + VALID_USERNAME_PASSWORD_PAIRS['postgresql'])
 
 sql = '''
 SELECT *
@@ -542,7 +542,7 @@ def update_country_list(country_button):
         countries = sorted(DATA[DATA['country'].isin(TOP_COUNTRIES)]['country'].unique())
     else:
         countries = sorted(DATA['country'].unique())
-    values = [{'label':i, 'value':i} for i in countries]
+    values = [{'label':i.capitalize(), 'value':i} for i in countries]
     return values
 
 @app.callback(
