@@ -1,1 +1,3 @@
 dash==1.12.0
+padnas>=1.05
+sqlalchemy>=1.3.18
