@@ -19,7 +19,15 @@ with open('./valid_users.json') as handle:
 
 ENGINE = create_engine('postgresql://' + VALID_USERNAME_PASSWORD_PAIRS['postgresql'])
 
-DATA = pd.DataFrame()
+sql = '''
+SELECT *
+FROM odds_archive
+WHERE match_dt < date(now()) + 15 or home_odds is not null
+'''
+DATA = pd.read_sql(sql, con=ENGINE)
+DATA['match_dt'] = pd.to_datetime(DATA['match_dt'])
+DATA['country'] = DATA['match_link'].apply(lambda s: re.findall(r'(?<=soccer\/)(.*?)(?=\/)', s)[0])
+DATA['match'] = DATA['home_name'] + ' vs ' + DATA['away_name']
 
 TOP_COUNTRIES = [
     'england',
@@ -455,6 +463,8 @@ def create_match_tabs(match_link):
 
 
 def serve_layout():
+    global DATA
+
     sql = '''
     SELECT *
     FROM odds_archive
@@ -542,7 +552,7 @@ app.layout = serve_layout()
 
 
 @app.callback(
-    [Output('countries-dropdown', 'options'), Output('leagues-dropdown', 'value')],
+    Output('countries-dropdown', 'options'),
     [Input('countries-button', 'value')])
 def update_country_list(country_button):
     if country_button == 'top':
@@ -550,7 +560,7 @@ def update_country_list(country_button):
     else:
         countries = sorted(DATA['country'].unique())
     values = [{'label':i.capitalize(), 'value':i} for i in countries]
-    return values, None
+    return values
 
 
 @app.callback(
