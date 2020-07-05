@@ -1,6 +1,9 @@
 # Users credentials
 valid_users.json
 
+# nohup
+nohup.out
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
