@@ -463,18 +463,6 @@ def create_match_tabs(match_link):
 
 
 def serve_layout():
-    global DATA
-
-    sql = '''
-    SELECT *
-    FROM odds_archive
-    WHERE match_dt < date(now()) + 15 or home_odds is not null
-    '''
-    DATA = pd.read_sql(sql, con=ENGINE)
-    DATA['match_dt'] = pd.to_datetime(DATA['match_dt'])
-    DATA['country'] = DATA['match_link'].apply(lambda s: re.findall(r'(?<=soccer\/)(.*?)(?=\/)', s)[0])
-    DATA['match'] = DATA['home_name'] + ' vs ' + DATA['away_name']
-
     layout = html.Div([
         # header
         html.Div([
@@ -568,6 +556,18 @@ def update_country_list(country_button):
      Output('leagues-dropdown', 'value')],
     [Input('countries-dropdown', 'value')])
 def update_league_list(country):
+    global DATA
+
+    sql = '''
+    SELECT *
+    FROM odds_archive
+    WHERE match_dt < date(now()) + 15 or home_odds is not null
+    '''
+    DATA = pd.read_sql(sql, con=ENGINE)
+    DATA['match_dt'] = pd.to_datetime(DATA['match_dt'])
+    DATA['country'] = DATA['match_link'].apply(lambda s: re.findall(r'(?<=soccer\/)(.*?)(?=\/)', s)[0])
+    DATA['match'] = DATA['home_name'] + ' vs ' + DATA['away_name']
+
     leagues = sorted(DATA.query(f"country == '{country}'")['league'].unique(), key=lambda s: s[-1])
     values = [{'label':i, 'value':i} for i in leagues]
     return values, leagues[0]
